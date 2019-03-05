@@ -2,12 +2,19 @@ import tensorflow as tf
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from keras.utils import to_categorical
 
 def load_data(df):
     train_y = df['label']
     train_X = df.drop('label', axis=1)
+    
+    return train_test_split(train_X, train_y, test_size=0.1, random_state=0)
 
-    return train_test_split(train_X, train_y, test_size=0.3, random_state=0)
+def normalize_inputs(x, y):
+    x = tf.cast(x / 255, tf.float32)
+    y = to_categorical(y, 10)
+    y = tf.cast(y, tf.int32)
+    return x, y
 
 def preprocess_data(x, y):
     labels = tf.cast(y, tf.int32)

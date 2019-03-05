@@ -128,3 +128,4 @@ tf.estimator.train_and_evaluate(
     eval_spec=eval_spec,
 )
 
+pred = 
