@@ -17,7 +17,7 @@ train_X, valid_X, train_y, valid_y = load_data(train)
 
 train_X, train_y = normalize_inputs(train_X, train_y)
 valid_X, valid_y = normalize_inputs(valid_X, valid_y)
-test_X = test_X.as_matrix().reshape(28000, 784)
+
 
 inputs = Input(shape=(784,))
 
@@ -40,7 +40,7 @@ hx = model.fit(
     steps_per_epoch=10,
     validation_steps=10)
 
-test_pred = pd.DataFrame(model.predict(test_X, steps=10))
+test_pred = pd.DataFrame(model.predict(test_X, steps=1))
 test_pred = pd.DataFrame(test_pred.idxmax(axis = 1))
 test_pred.index.name = 'ImageId'
 test_pred = test_pred.rename(columns = {0: 'Label'}).reset_index()

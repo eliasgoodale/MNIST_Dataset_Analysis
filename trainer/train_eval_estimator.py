@@ -97,7 +97,7 @@ def build_DNNClassifier():
         optimizer=tf.train.AdamOptimizer(1e-4),
         n_classes=10,
         dropout=0.1,
-        model_dir='models/TensorflowDNNClassifier',
+        model_dir='models/Estimator',
         config=checkpoint_config
     )
     return classifier
@@ -119,7 +119,7 @@ train_spec = tf.estimator.TrainSpec(
 )
 
 eval_spec = tf.estimator.EvalSpec(
-    input_fn = lambda: input_fn(valid_X, valid_y, 64),
+    input_fn=lambda: input_fn(valid_X, valid_y, 64),
 )
 
 tf.estimator.train_and_evaluate(
@@ -127,5 +127,20 @@ tf.estimator.train_and_evaluate(
     train_spec=train_spec,
     eval_spec=eval_spec,
 )
+test_X = test.values
+print(test_X.shape)
+test_X = test_X / 255
+test_input_fn = tf.estimator.inputs.numpy_input_fn(
+    x={"image": test_X},
+    num_epochs=1,
+    shuffle=False,
+)
+test_pred = estimator.predict(input_fn=test_input_fn)
+predicted_classes = [int(p["classes"]) for p in test_pred]
 
-pred = 
+output = pd.DataFrame(predicted_classes)
+output.index.name = 'ImageId'
+output = output.rename(columns = {0: 'Label'}).reset_index()
+output['ImageId'] = output['ImageId'] + 1
+
+output.to_csv('predictions/Estimator/submission.csv', index = False)
